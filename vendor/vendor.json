@@ -1,6 +1,5 @@
 {
 	"heroku": {
-		"install": ["github.com/gorilla/mux"],
 		"goVersion": "go1.8"
 	},
 	"rootPath": "github.com/reagent/heroku-go-example"
