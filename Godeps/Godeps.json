@@ -1,0 +1,14 @@
+{
+    "ImportPath": "github.com/geniuscasio/rest-gotrello",
+    "GoVersion": "go1.8",
+    "GodepVersion": "v74",
+    "Packages": [
+        "./..."
+    ],
+    "Deps": [
+        {
+            "ImportPath": "github.com/gorilla/mux",
+            "Rev": "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
+        }          
+    ]
+}
