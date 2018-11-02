@@ -1,6 +1,6 @@
 {
     "ImportPath": "github.com/geniuscasio/rest-gotrello",
-    "GoVersion": "go1.8",
+    "GoVersion": "go1.7.0",
     "GodepVersion": "v74",
     "Packages": [
         "./..."
