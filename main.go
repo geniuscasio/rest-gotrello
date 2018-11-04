@@ -53,10 +53,21 @@ func DeletePersonEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func db_prepare() {
+	db_host := os.Getenv("db_host") 
+	db_port := os.Getenv("db_port") 
+	db_user := os.Getenv("db_user")
+	db_password := os.Getenv("db_password")
+	db_name := os.Getenv("db_name")
+
+	fmt.Println("db_cred=" + db_host + db_port + db_user + db_password + db_name);
+}
+
 func main() {
 	router := mux.NewRouter()
 	port := os.Getenv("PORT")
-	log.Println(port)
+
+	fmt.Println("Message")
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	} else {
