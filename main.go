@@ -66,6 +66,7 @@ func db_prepare() {
 
 func main() {
 	router := mux.NewRouter()
+	db_prepare()
 	port := os.Getenv("PORT")
 
 	fmt.Println("Message")
