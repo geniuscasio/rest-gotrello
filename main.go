@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
 	"fmt"
+	"database/sql"
 )
 
 type Person struct {
@@ -55,13 +57,28 @@ func DeletePersonEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func db_prepare() {
-	db_host := os.Getenv("db_host") 
-	db_port := os.Getenv("db_port") 
-	db_user := os.Getenv("db_user")
-	db_password := os.Getenv("db_password")
-	db_name := os.Getenv("db_name")
+	host := os.Getenv("db_host") 
+	port := os.Getenv("db_port") 
+	user := os.Getenv("db_user")
+	password := os.Getenv("db_password")
+	name := os.Getenv("db_name")
 
-	fmt.Println("db_cred=" + db_host + db_port + db_user + db_password + db_name);
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s"+
+		"password=%s dbname=%s sslmode=%s sslmode=disable",
+		host, port, password, name)
+
+	fmt.Println(psqlInfo);
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+    if err != nil {
+        panic(err)
+    }
 }
 
 func main() {
