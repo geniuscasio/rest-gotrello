@@ -56,7 +56,7 @@ func DeletePersonEndpoint(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	port := os.Getenv("PORT")
-
+	log.Println(port)
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	} else {
