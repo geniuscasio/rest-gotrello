@@ -1,7 +1,7 @@
-run: bin/heroku-go-example
+run: bin/rest-gotrello
 	@PATH="$(PWD)/bin:$(PATH)" heroku local
 
-bin/heroku-go-example: main.go
-	go get -v -u github.com/gorilla/mux || go build -o bin/heroku-go-example main.go
+bin/rest-gotrello: main.go
+	go build -o bin/rest-gotrello main.go
 clean:
 	rm -rf bin
