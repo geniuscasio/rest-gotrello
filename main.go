@@ -65,7 +65,7 @@ func db_prepare() {
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s"+
 		"password=%s dbname=%s sslmode=%s sslmode=disable",
-		host, port, password, name)
+		host, port, user, password, name)
 
 	fmt.Println(psqlInfo);
 
