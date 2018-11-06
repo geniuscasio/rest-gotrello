@@ -11,18 +11,7 @@ import (
 	"database/sql"
 )
 
-type Person struct {
-	ID        string   `json:"id,omitempty`
-	Firstname string   `json:"firstname,omitempty`
-	Lastname  string   `json:"lastname,omitempty"`
-	Address   *Address `json:"address,omitempty"`
-}
-type Address struct {
-	City  string `json:"city,omitempty"`
-	State string `json:"state,omitempty"`
-}
-
-var people []Person
+var tags []Person
 
 func GetPersonEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -35,6 +24,10 @@ func GetPersonEndpoint(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&Person{})
 }
 func GetPeopleEndpoint(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	for key, value := range r.Form {
+		fmt.Printf("%s = %s\n", key, value)
+	}
 	json.NewEncoder(w).Encode(people)
 }
 func CreatePersonEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -68,17 +61,6 @@ func db_prepare() {
 		host, port, user, password, name)
 
 	fmt.Println(psqlInfo);
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-    if err != nil {
-        panic(err)
-    }
 }
 
 func main() {
@@ -95,9 +77,31 @@ func main() {
 
 	people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
 	people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
-	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
-	router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
-	router.HandleFunc("/people/{id}", CreatePersonEndpoint).Methods("POST")
-	router.HandleFunc("/people/{id}", DeletePersonEndpoint).Methods("DELETE")
+	// People
+	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")	
+	router.HandleFunc("/people/{id}", GetPeopleEndpoint).Methods("GET")
+	router.HandleFunc("/people/{id}", CreatePeopleEndpoint).Methods("POST")
+	router.HandleFunc("/people/{id}", DeletePeopleEndpoint).Methods("DELETE")
+	
+	// // Income sources tags
+	// router.HandleFunc("/incomeTag", GetIncomeTagEndpoint).Methods("GET")	
+	// router.HandleFunc("/incomeTag/{id}", GetIncomeTagEndpoint).Methods("GET")
+	// router.HandleFunc("/incomeTag/{id}", CreateIncomeTagEndpoint).Methods("POST")
+	// router.HandleFunc("/incomeTag/{id}", DeleteIncomeTagEndpoint).Methods("DELETE")
+	// // Outcome sources tags
+	// router.HandleFunc("/outcomeTag", GetOutcomeTagEndpoint).Methods("GET")
+	// router.HandleFunc("/outcomeTag/{id}", GetOutcomeTagEndpoint).Methods("GET")
+	// router.HandleFunc("/outcomeTag/{id}", CreateOutcomeTagEndpoint).Methods("POST")
+	// router.HandleFunc("/outcomeTag/{id}", DeleteOutcomeTagEndpoint).Methods("DELETE")
+	// // Route Income
+	// router.HandleFunc("/income", GetIncomeEndpoint).Methods("GET")	
+	// router.HandleFunc("/income/{id}", GetIncomeEndpoint).Methods("GET")
+	// router.HandleFunc("/income/{id}", CreateIncomeEndpoint).Methods("POST")
+	// router.HandleFunc("/income/{id}", DeleteIncomeEndpoint).Methods("DELETE")
+	// // Route Outcome
+	// router.HandleFunc("/outcome", GetOutcomeEndpoint).Methods("GET")
+	// router.HandleFunc("/outcome/{id}", GetOutcomeEndpoint).Methods("GET")
+	// router.HandleFunc("/outcome/{id}", CreateOutcomeEndpoint).Methods("POST")
+	// router.HandleFunc("/outcome/{id}", DeleteOutcomeEndpoint).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(port, router))
 }
