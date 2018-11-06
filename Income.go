@@ -1,10 +1,5 @@
 package main
 
-import (  
-	"fmt"
-	"IncomeTag"
-)
-
 var Incomes []Income
 
 type Income struct {
