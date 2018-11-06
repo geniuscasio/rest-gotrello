@@ -88,7 +88,7 @@ func main() {
 	people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
 	people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
 	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")	
-	router.HandleFunc("/people/{id}", GetPeopleEndpoint).Methods("GET")
+	router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
 	router.HandleFunc("/people/{id}", CreatePeopleEndpoint).Methods("POST")
 	router.HandleFunc("/people/{id}", DeletePeopleEndpoint).Methods("DELETE")
 	// // Income sources tags
