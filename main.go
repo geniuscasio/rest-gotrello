@@ -32,7 +32,7 @@ func main() {
 
 	router.HandleFunc("/", endpoints.Get).Methods("GET")
 	router.HandleFunc("/income/{id}", endpoints.Get).Methods("GET")
-	router.HandleFunc("income/", endpoints.Create).Methods("POST")
+	router.HandleFunc("/income/", endpoints.Create).Methods("POST")
 	router.HandleFunc("/income/", endpoints.Get).Methods("GET")
 	log.Fatal(http.ListenAndServe(port, router))
 }
