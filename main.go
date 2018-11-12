@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 	fmt.Println(dir)
 	// This will serve files under http://localhost:8000/static/<filename>
-	router.PathPrefix("/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
+	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
 
 	router.HandleFunc("/", endpoints.Get).Methods("GET")
 	router.HandleFunc("/income/{id}", endpoints.Get).Methods("GET")
