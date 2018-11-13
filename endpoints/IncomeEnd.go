@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	storage "github.com/geniuscasio/rest-gotrello/storage"
+	storage "github.com/geniuscasio/rest-gotrello/Storage"
 	"github.com/geniuscasio/rest-gotrello/entities"
 	"github.com/gorilla/mux"
 )
