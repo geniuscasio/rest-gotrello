@@ -12,6 +12,16 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func logging(f http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		expiration := time.Now().Add(365 * 24 * time.Hour)
+    	cookie := http.Cookie{Name: "username", Value: "astaxie", Expires: expiration}
+		http.SetCookie(w, &cookie)
+		fmt.Println("set cookie in logging")
+		f(w, r)
+	}
+}
+
 func main() {
 	router := mux.NewRouter()
 	port := os.Getenv("PORT")
@@ -30,9 +40,9 @@ func main() {
 	// This will serve files under http://localhost:8000/static/<filename>
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
 
-	router.HandleFunc("/", endpoints.Get).Methods("GET")
-	router.HandleFunc("/income/{id}", endpoints.Get).Methods("GET")
-	router.HandleFunc("/income/", endpoints.Create).Methods("POST")
-	router.HandleFunc("/income/", endpoints.Get).Methods("GET")
+	router.HandleFunc("/", logging(endpoints.Get)).Methods("GET")
+	router.HandleFunc("/income/{id}", logging(endpoints.Get)).Methods("GET")
+	router.HandleFunc("/income/", logging(endpoints.Create)).Methods("POST")
+	router.HandleFunc("/income/", logging(endpoints.Get)).Methods("GET")
 	log.Fatal(http.ListenAndServe(port, router))
 }
