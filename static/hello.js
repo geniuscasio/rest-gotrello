@@ -6,21 +6,21 @@ $(document).ready(function() {
         var jsonData = JSON.parse(data);
         for (var i = 0; i < jsonData.length; i++) {
             var income = jsonData[i];
-            console.log(income.hint);
+            console.log(income);
             var id = income.id;
+            var date = income.date;
             var hint = income.hint;
             var amount = income.amount;
-            var html = '<div class="col-sm - 3">'
-                + '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">'
-                + '<div class="d-flex w-30 justify-content-between">'
-                + '        <h5 class="mb-1">' + amount + '$</h5>'
-                + '        <small>3 days ago</small>'
-                + '    </div>'
-                + '    <p class="mb-1">' + hint + '</p>'
-                + '    <small>' + id +'</small>'
-                + '    </a>'
-                + ' </div>'
-            $('.row').append(html);
+            var htmlTable =
+             '<tr>'
+                +'<th scope="row">${id}</th>'
+                +'<td>${amount}$</td>'
+                +'<td>${date}</td>'
+                +'<td>${hint}</td>'
+                +'<td>Tags</td>'
+                +'<td>235$</td>'
+            +'</tr>'
+            $('.incomeTable').append(htmlTable);
         }
         
     });
