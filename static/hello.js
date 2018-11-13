@@ -11,15 +11,15 @@ $(document).ready(function() {
             var date = income.date;
             var hint = income.hint;
             var amount = income.amount;
-            var htmlTable =
-             '<tr>'
-                +'<th scope="row">${id}</th>'
-                +'<td>${amount}$</td>'
-                +'<td>${date}</td>'
-                +'<td>${hint}</td>'
-                +'<td>Tags</td>'
-                +'<td>235$</td>'
-            +'</tr>'
+            var htmlTable =`
+            <tr>
+                <th scope="row">${id}</th>
+                <td>${amount}$</td>
+                <td>${date}</td>
+                <td>${hint}</td>
+                <td>Tags</td>
+                <td>235$</td>
+            </tr>`;
             $('.incomeTable').append(htmlTable);
         }
         
