@@ -15,8 +15,8 @@ import (
 
 func logging(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("username")
-		fmt.Println(cookie)
+		username, err := r.Cookie("username")
+		fmt.Println(username)
 		
 		expiration := time.Now().Add(365 * 24 * time.Hour)
     	cookie := http.Cookie{Name: "username", Value: time.Now().Format("2006-01-02 15:04:05"), Expires: expiration}
