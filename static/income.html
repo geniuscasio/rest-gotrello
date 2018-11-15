@@ -31,7 +31,16 @@
             
                     </tbody>
                 </table>
+                <form class="col-sm-5 mx-auto">
+                    <input type="number" min="0" class="form-control" name="id" placeholder="Income ID" required="required">
+                    <input type="number" min="0" class="form-control" name="amount" placeholder="Income amount" required="required">
+                    <input type="date" class="form-control" name="date" placeholder="Income date" required="required">
+                    <input type="text" class="form-control" name="hint" placeholder="Income hint" required="required">
+                    
+                    <input class="btn btn-primary btn-block" type="button" onclick="newIncome(this.form)" value="Add new" />
+                </form>
             </div>
         </div>
+        
     </body>
 </html>

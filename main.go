@@ -31,7 +31,7 @@ func main() {
 	port := os.Getenv("PORT")
 	fmt.Println("Message")
 	if port == "" {
-		fmt.Println("Port must be set")
+		fmt.Println("Env POST must be set!")
 		port = ":8000"
 	} else {
 		port = ":" + port
@@ -40,7 +40,7 @@ func main() {
 
 	flag.StringVar(&dir, "dir", "./static", "the directory to serve files from. Defaults to the current dir")
 	flag.Parse()
-	fmt.Println(dir)
+	fmt.Println("Running server on port " + port)
 
 	// GETs
 	router.HandleFunc("/api/v1/", logging(endpoints.Get)).Methods("GET")
