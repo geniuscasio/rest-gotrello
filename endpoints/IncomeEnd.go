@@ -25,7 +25,6 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	_id := params["id"]
 	if _id == "" {
-		fmt.Println("id empty")
 		json.NewEncoder(w).Encode(storage.GetAll())
 	} else {
 		json.NewEncoder(w).Encode(storage.GetByID(params["id"]))
