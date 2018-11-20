@@ -1,6 +1,7 @@
 $(document).ready(function() {
     $.ajax({
         //http://rest-trello-server.herokuapp.com/
+        
         url:"api/v1/income/"
     }).then(function(data) {
         $('.row').append();
