@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/geniuscasio/rest-gotrello/endpoints"
 	"github.com/gorilla/mux"
@@ -15,21 +14,33 @@ import (
 
 func logging(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		username, _ := r.Cookie("username")
-		fmt.Println(username)
+		sessionID := "empty"
+		userName := "empty"
+		cookieSession, _ := r.Cookie("sessionID")
+		if cookieSession != nil {
+			sessionID = cookieSession.Value
+		}
 
-		expiration := time.Now().Add(365 * 24 * time.Hour)
-		cookie := http.Cookie{Name: "username", Value: time.Now().Format("2006-01-02 15:04:05"), Expires: expiration}
-		http.SetCookie(w, &cookie)
-		fmt.Println("set cookie in logging")
-		f(w, r)
+		cookieUser, _ := r.Cookie("userName")
+		if cookieUser != nil {
+			userName = cookieUser.Value
+		}
+
+		fmt.Printf("User cookie userName=%s sessionID=%s \n", userName, sessionID)
+		message, ok := endpoints.CheckSession(userName, sessionID)
+		fmt.Printf("CheckSession return '%t' with message '%s' \n", ok, message)
+		if ok {
+			f(w, r)
+		} else {
+			fmt.Println("ok false")
+			http.Redirect(w, r, "/", 301)
+		}
 	}
 }
 
 func main() {
 	router := mux.NewRouter()
 	port := os.Getenv("PORT")
-	fmt.Println("Message")
 	if port == "" {
 		fmt.Println("Env POST must be set!")
 		port = ":8000"
@@ -41,8 +52,8 @@ func main() {
 	flag.StringVar(&dir, "dir", "./static", "the directory to serve files from. Defaults to the current dir")
 	flag.Parse()
 	fmt.Println("Running server on port " + port)
-
 	// GETs
+	router.HandleFunc("/api/v1/login/", endpoints.Login).Methods("POST")
 	router.HandleFunc("/api/v1/", logging(endpoints.Get)).Methods("GET")
 	router.HandleFunc("/api/v1/income/", logging(endpoints.Get)).Methods("GET")
 	router.HandleFunc("/api/v1/income/{id}", logging(endpoints.Get)).Methods("GET")
