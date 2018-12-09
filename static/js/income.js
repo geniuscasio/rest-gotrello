@@ -2,10 +2,12 @@ $(document).ready(function() {
     $.ajax({        
         url:"api/v1/income/"
     }).then(function(data) {
+        var t = document.getElementById("username");
+        console.log(t);
         $('.row').append();
-        console.log(data);
         var jsonData = JSON.parse(data);
-        console.log(jsonData);
+        console.log(jsonData.session.login);
+        t.innerText = jsonData.session.login;
         if (jsonData["session"]["status"] == false) {
             window.alert("Ошибка сессии");
             window.location.href = "/";
@@ -30,9 +32,10 @@ $(document).ready(function() {
         for (var i = 0; i < jsonData.length; i++) {
             var income = jsonData[i];
             var id = income.id;
-            var date = income.date;
+            var date = new Date(income.date);
             var hint = income.hint;
             var amount = income.amount;
+
             fallSum += amount;
             tags = `<a class="badge badge-warning income-tags">no tags</a>`
             if (!(typeof(income.tags) === "undefined")) {
@@ -41,11 +44,12 @@ $(document).ready(function() {
                     tags += `<a class="badge badge-info income-tags">${income.tags[tag].name}</a>`
                 }
             }
+            dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' };
             htmlTable += `
             <tr>
                 <th scope="row">${id}</th>
                 <td>${amount}$</td>
-                <td>${date}</td>
+                <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
                 <td>${hint}</td>
                 <td>${tags}</td>
                 <td>${fallSum}$</td>

@@ -37,6 +37,8 @@ func SecureEndpoint(f SecureHandler) http.HandlerFunc {
 		if rb.Session.Status {
 			f(r, &rb)
 			json.NewEncoder(w).Encode(rb)
+		} else {
+			json.NewEncoder(w).Encode(rb)
 		}
 	}
 
