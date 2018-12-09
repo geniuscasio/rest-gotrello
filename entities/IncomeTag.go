@@ -3,7 +3,7 @@ package entities
 //IncomeTag struct represent IncIncome object
 type IncomeTag struct {
 	ID          int      `json:"id,omitempty"`
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description"`
-	Aliases     []string `json:"aliases"`
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	Aliases     []string `json:"aliases,omitempty"`
 }

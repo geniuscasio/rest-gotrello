@@ -35,3 +35,8 @@ function check(form) {
     document.body.appendChild(form);
     form.submit();
 }
+
+function isLoginOK(data) {
+    var jsonData = JSON.parse(data);
+    console.log(jsonData)
+}
