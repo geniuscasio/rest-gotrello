@@ -3,7 +3,7 @@ $(document).ready(function() {
         url:"api/v1/income/"
     }).then(function(data) {
         var t = document.getElementById("username");
-        console.log(t);
+
         $('.row').append();
         var jsonData = JSON.parse(data);
         console.log(jsonData.session.login);
@@ -30,13 +30,19 @@ $(document).ready(function() {
         jsonData = jsonData["content"]
         console.log(jsonData)
         for (var i = 0; i < jsonData.length; i++) {
+            const incomeStyle = "income";
+            const outcomeStyle = "outcome";
+
             var income = jsonData[i];
             var id = income.id;
             var date = new Date(income.date);
             var hint = income.hint;
             var amount = income.amount;
-
+            var rowStyle = incomeStyle;
             fallSum += amount;
+            
+            if (amount < 0) { rowStyle = outcomeStyle; }
+
             tags = `<a class="badge badge-warning income-tags">no tags</a>`
             if (!(typeof(income.tags) === "undefined")) {
                 tags = ''
@@ -46,13 +52,14 @@ $(document).ready(function() {
             }
             dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' };
             htmlTable += `
-            <tr>
+            <tr class="amount ${rowStyle}">
                 <th scope="row">${id}</th>
-                <td>${amount}$</td>
+                <td><a>${amount}$</a></td>
                 <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
                 <td>${hint}</td>
                 <td>${tags}</td>
-                <td>${fallSum}$</td>
+                <td>↓${fallSum}$</td>
+                <td><button>Delete</button></td>
             </tr>`;
         }
         $('.incomeTable').append(htmlTable);
@@ -88,6 +95,7 @@ function newIncome(form) {
         hint: hint,
         tags: tags
     }));
+    location.reload();
 }
 
 function isLoginOK(data) {
