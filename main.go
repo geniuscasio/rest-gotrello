@@ -97,8 +97,6 @@ func main() {
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
 	var in inMsg
-	p, u, _ := r.BasicAuth()
-	fmt.Println(p, u)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&in)
 	if err != nil {
@@ -108,7 +106,6 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	errorExists := false
 	checkError := func(f IErrorCheck) {
 		if errorExists == true {
-			fmt.Println("Another one bite to dust")
 			return
 		}
 		err := f(in)
