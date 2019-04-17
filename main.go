@@ -132,6 +132,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf []byte
 	buf, err = json.Marshal(out)
+	fmt.Println(string(buf))
 	_, err = w.Write(buf)
 }
 
