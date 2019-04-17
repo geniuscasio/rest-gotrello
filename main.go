@@ -87,7 +87,7 @@ func main() {
 	// POSTs
 	router.HandleFunc("/api/v1/income/", ends.SecureEndpoint(ends.Create)).Methods("POST")
 	
-	router.HandleFunc("/test", sayHello).Methods("GET")
+	router.HandleFunc("/test", sayHello).Methods("GET", "POST")
 
 	// Static "/" must be last in code
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
