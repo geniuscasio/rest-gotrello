@@ -126,7 +126,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	if errorExists {
 		return
 	}
-	fmt.Println("No errors")
+	fmt.Printf("[%d] No errors in %d messages", COUNTER, len(in.Messages))
 	var out outMsg
 	for _, i := range in.Messages {
 		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.Itoa(int(COUNTER)))
