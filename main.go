@@ -41,10 +41,17 @@ type inMsg struct {
 		} `json:"viber"`
 	} `json:"channel_options"`
 }
-
+type Message struct {
+	Processed bool   `json:"processed"`
+	Phone     string `json:"phone_number"`
+	MessageID string `json:"message_id"`
+	ExtraID   string `json:"extra_id"`
+	Accepted  bool   `json:"accepted"`
+}
 type outMsg struct {
-	Phone  string `json:"phone,omitempty"`
-	Status string `json:"status"`
+	Messages []Message `json:"messages,omitempty"`
+	Code     string    `json:"error_code,omitempty"`
+	Status   string    `json:"error_text,omitempty"`
 }
 
 type IErrorCheck func(inMsg) error
@@ -52,7 +59,10 @@ type IErrorCheck func(inMsg) error
 const LATIN_MAX_SIZE = 765
 const CYRILIC_MAX_SIZE = 365
 
+var COUNTER = 1
+
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	router := mux.NewRouter()
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -85,6 +95,8 @@ func main() {
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
 	var in inMsg
+	p, u, _ := r.BasicAuth()
+	fmt.Println(p, u)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&in)
 	if err != nil {
@@ -109,6 +121,28 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	}
 	checkError(checkNumber)
 	checkError(checkText)
+	if errorExists {
+		return
+	}
+	fmt.Println("No errors")
+	var out outMsg
+	for _, i := range in.Messages {
+		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.Itoa(int(COUNTER)))
+		COUNTER += 1
+		out.Messages = append(out.Messages, Message{Processed: true, Phone: strconv.Itoa(int(i.Phone)), MessageID: tmp, ExtraID: i.Extraid, Accepted: true})
+	}
+	var buf []byte
+	buf, err = json.Marshal(out)
+	_, err = w.Write(buf)
+}
+
+func randStr(n int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz1234567890")
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
 
 func checkText(i inMsg) error {
