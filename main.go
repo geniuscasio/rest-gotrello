@@ -101,7 +101,11 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("request Content-Length=%d ", r.ContentLength)
 	err := decoder.Decode(&in)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
+		out := outMsg{Status: "Error " + err.Error()}
+		var buf []byte
+		buf, err = json.Marshal(out)
+		_, err = w.Write(buf)
 		return
 	}
 	errorExists := false
