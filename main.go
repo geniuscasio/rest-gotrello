@@ -98,9 +98,10 @@ func main() {
 func sayHello(w http.ResponseWriter, r *http.Request) {
 	var in inMsg
 	decoder := json.NewDecoder(r.Body)
+	fmt.Printf("request Content-Length=%d ", r.ContentLength)
 	err := decoder.Decode(&in)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Print(err)
 		return
 	}
 	errorExists := false
@@ -123,7 +124,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	if errorExists {
 		return
 	}
-	fmt.Printf("[%d] No errors in %d messages\n", COUNTER, len(in.Messages))
+	fmt.Printf("[%d] No errors in %d messages ", COUNTER, len(in.Messages))
 	var out outMsg
 	for _, i := range in.Messages {
 		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.Itoa(int(COUNTER)))
@@ -132,7 +133,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf []byte
 	buf, err = json.Marshal(out)
-	fmt.Println(len(out.Messages))
+	fmt.Printf(" response size=%d\n", len(buf))
 	_, err = w.Write(buf)
 }
 
