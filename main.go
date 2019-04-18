@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"encoding/json"
 	"unicode/utf8"
@@ -97,6 +98,12 @@ func main() {
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
 	var in inMsg
+	// Save a copy of this request for debugging.
+	requestDump, err1 := httputil.DumpRequest(r, true)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	fmt.Println(string(requestDump))
 	decoder := json.NewDecoder(r.Body)
 	fmt.Printf("request Content-Length=%d ", r.ContentLength)
 	err := decoder.Decode(&in)
