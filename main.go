@@ -124,7 +124,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	if errorExists {
 		return
 	}
-	fmt.Printf("[%d] No errors in %d messages ", COUNTER, len(in.Messages))
+	fmt.Printf("[%d] No errors in %d messages \n", COUNTER, len(in.Messages))
 	var out outMsg
 	for _, i := range in.Messages {
 		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.Itoa(int(COUNTER)))
@@ -133,7 +133,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf []byte
 	buf, err = json.Marshal(out)
-	fmt.Printf(" response size=%d\n", len(buf))
+	fmt.Printf(" response size=%d \n", len(buf))
 	_, err = w.Write(buf)
 }
 
