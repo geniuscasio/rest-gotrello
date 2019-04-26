@@ -138,7 +138,7 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("[%d] No errors in %d messages \n", COUNTER, len(in.Messages))
 	var out outMsg
 	for _, i := range in.Messages {
-		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.Itoa(int(COUNTER)))
+		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.FormatInt(time.Now().UTC().UnixNano(), 10))
 		COUNTER += 1
 		out.Messages = append(out.Messages, Message{Processed: true, Phone: strconv.Itoa(int(i.Phone)), MessageID: tmp, ExtraID: i.Extraid, Accepted: true})
 	}
