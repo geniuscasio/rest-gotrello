@@ -33,7 +33,7 @@ func InitDB() {
 		password VARCHAR (100) NOT NULL
 	)`)
 	_, r = c.Exec(`
-		INSERT INTO MY_USERS(username, password) select "admin", "-995833633"
+		INSERT INTO MY_USERS(username, password) select "admin" as "username", "-995833633" as "password"
 	`)
 	if r != nil {
 		fmt.Println(r.Error())
