@@ -13,40 +13,35 @@ import (
 type SecureHandler func(r *http.Request, rb *ResponseBox)
 
 //Create entity
-func Create(r *http.Request, rb *ResponseBox) {
+func Create(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Create invoked!")
 	r.ParseForm()
 	fmt.Println(r.Form)
 	defer r.Body.Close()
-	/*
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			//handle read response error
-			fmt.Println("Error")
-		}
-		fmt.Printf("%s\n", string(body))*/
-
 	fmt.Println(r.Body)
 	var income entities.Income
 	err := json.NewDecoder(r.Body).Decode(&income)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Println(income.Hint)
 	storage.Save(income)
-	rb.Content = income
+	created, _ := json.Marshal(income)
+	w.WriteHeader(201)
+	w.Write(created)
 }
 
 //Get entity
-func Get(r *http.Request, rb *ResponseBox) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside Get")
 	params := mux.Vars(r)
 	_id := params["id"]
 	fmt.Print(_id)
 	if _id == "" {
-		rb.Content = storage.GetAll()
+		data, _ := json.Marshal(storage.GetAll())
+		w.Write(data)
 	} else {
-		rb.Content = storage.GetByID(params["id"])
+		data, _ := json.Marshal(storage.GetByID(params["id"]))
+		w.Write(data)
 	}
 }
 

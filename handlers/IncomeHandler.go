@@ -2,13 +2,27 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"net/http"
-	"models"
 	"fmt"
+	"net/http"
+
+	"github.com/geniuscasio/rest-gotrello/models"
+	"github.com/gorilla/mux"
 )
-var IncomeStorage []Income
+
+// IncomeStorage imulate persistant storage for testing purposes
+var IncomeStorage []models.Income
+
+// GetAllIncomeEndpoint returns all items
 func GetAllIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	for key, value := range r.Form {
+		fmt.Printf("%s = %s\n", key, value)
+	}
+	json.NewEncoder(w).Encode(Income)
+}
+
+// GetIncomeEndpoint returns specified Income item
+func GetIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	for _, item := range IncomeStorage {
 		if item.ID == params["id"] {
@@ -18,13 +32,8 @@ func GetAllIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(&Income{})
 }
-func GetIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	for key, value := range r.Form {
-		fmt.Printf("%s = %s\n", key, value)
-	}
-	json.NewEncoder(w).Encode(Income)
-}
+
+// CreateIncomeEndpoint will create new Income item
 func CreateIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	income := Income{}
@@ -33,6 +42,8 @@ func CreateIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
 	IncomeStorage = append(IncomeStorage, income)
 	json.NewEncoder(w).Encode(IncomeStorage)
 }
+
+//DeleteIncomeEndpoint will delete specified Income item
 func DeleteIncomeEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	for index, item := range IncomeStorage {

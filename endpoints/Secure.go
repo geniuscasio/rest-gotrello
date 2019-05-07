@@ -1,7 +1,7 @@
 package endpoints
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"net/http"
@@ -11,9 +11,6 @@ import (
 type CookieSession struct {
 	ExpirationDate time.Time `json:"expirationDate"`
 	Login          string    `json:"login"`
-	ID             string    `json:"id"`
-	Status         bool      `json:"status"`
-	Message        string    `json:"message"`
 }
 
 type ResponseBox struct {
@@ -27,21 +24,31 @@ var users = map[string]string{
 	"valentine": "-1749185786", //pvalentine
 }
 
-func SecureEndpoint(f SecureHandler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// 1. Verify session and create ResponseBox
-		// 2. Pass ResponseBox to endpoint, get data and session info wrapped in struct ResponseBox
-		// 3. Marshal ResponseBox and send as response
-		s := GetSession(r)
-		rb := ResponseBox{s, nil}
-		if rb.Session.Status {
-			f(r, &rb)
-			json.NewEncoder(w).Encode(rb)
-		} else {
-			json.NewEncoder(w).Encode(rb)
-		}
-	}
+func AccessLogMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.RequestURI)
+		session := GetSession(r)
+		fmt.Printf("[AccessLog]%s - %s Session id = %s \n", r.RequestURI, r.Host, session)
+		next.ServeHTTP(w, r)
+	})
+}
 
+func SecureEndoint(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.RequestURI)
+		if r.RequestURI == "/api/v1/login/" || r.RequestURI == "/" || r.RequestURI == "/js/login.js" || r.RequestURI == "/css/main.css" {
+			next.ServeHTTP(w, r)
+		} else {
+			session := GetSession(r)
+			ok, err := CheckSession(session)
+			if ok {
+				fmt.Printf("Session id = %s \n", session)
+				next.ServeHTTP(w, r)
+			} else {
+				w.Write([]byte(err.Error()))
+			}
+		}
+	})
 }
 
 // GetUserBySession returns Username by sessionId
@@ -66,27 +73,31 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	delete(sessions, sessionID.Value)
 }
 
-// GetSession exits and not expired
-func GetSession(r *http.Request) CookieSession {
-	userName := ""
-	cookie, err := r.Cookie("userName")
-	if err == nil {
-		userName = cookie.Value
-	}
-
-	session, ok := sessions[userName]
-	session.Message = "session not found"
-	session.Status = false
-	if ok {
-		session.Message = "ok"
-		session.Status = true
-		currentTime := time.Now()
-		if currentTime.After(session.ExpirationDate) && session.Status {
-			session.Message = "session get old"
-			session.Status = false
+// GetSession returns session string from *http.Request
+func GetSession(r *http.Request) string {
+	if r != nil {
+		session, err := r.Cookie("session")
+		if err != nil {
+			fmt.Println("empty session coockie")
+			return ""
 		}
+		return session.Value
 	}
-	return session
+	return "request is nil"
+
+}
+
+// CheckSession returns true if given session string contains in session and not expired
+func CheckSession(s string) (bool, error) {
+	fmt.Println("CheckSession")
+	ses, ok := sessions[s]
+	if ok {
+		if time.Now().Before(ses.ExpirationDate) {
+			return true, nil
+		}
+		return false, errors.New("session expired")
+	}
+	return false, errors.New("session not found")
 }
 
 // Login reads hash from request body, check if it valid, will create session for user and assign it to user cookie
@@ -104,9 +115,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		sessionID := fmt.Sprint(hash(userName + userHash + salt))
 		fmt.Printf("userName=%s userHash =%s salt=%s hashed=%s \n", userName, userHash, salt, sessionID)
 		expiration := timestamp.Add(10 * time.Minute)
-		sessions[userName] = CookieSession{ExpirationDate: expiration, Login: userName, ID: sessionID}
+		sessions[sessionID] = CookieSession{ExpirationDate: expiration, Login: userName}
 		cookieSessionID := http.Cookie{
-			Name:    "sessionID",
+			Name:    "session",
 			Path:    "/",
 			Value:   sessionID,
 			Expires: expiration}

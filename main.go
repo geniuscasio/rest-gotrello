@@ -1,205 +1,72 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"os"
-	"encoding/json"
-	"unicode/utf8"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-	"errors"
-	"math/rand"
-	
+
 	ends "github.com/geniuscasio/rest-gotrello/endpoints"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-type inMsg struct {
-	Messages []struct {
-		Phone   int64  `json:"phone_number"`
-		Extraid string `json:"extra_id"`
-		Text    string `json:"text,omitempty"`
-	} `json:"messages"`
-	CallbackURL    string   `json:"callback_url"`
-	StartTime      string   `json:"start_time"`
-	Tag            string   `json:"tag"`
-	Channels       []string `json:"channels"`
-	ChannelOptions struct {
-		Sms struct {
-			AlphaName string `json:"alpha_name,omitempty"`
-			TTL       int64  `json:"ttl,omitempty"`
-		} `json:"sms,omitempty"`
-		Viber struct {
-			TTL     int64  `json:"ttl"`
-			Img     string `json:"img"`
-			Caption string `json:"caption"`
-			Action  string `json:"action"`
-		} `json:"viber"`
-	} `json:"channel_options"`
-}
-type Message struct {
-	Processed bool   `json:"processed"`
-	Phone     string `json:"phone_number"`
-	MessageID string `json:"message_id"`
-	ExtraID   string `json:"extra_id"`
-	Accepted  bool   `json:"accepted"`
-}
-type outMsg struct {
-	Messages []Message `json:"messages,omitempty"`
-	Code     string    `json:"error_code,omitempty"`
-	Status   string    `json:"error_text,omitempty"`
+var db *sql.DB
+
+func getDB() *sql.DB {
+	if db == nil {
+		fmt.Printf("connect to db")
+		dbinfo := os.Getenv("DB_INFO")
+		dbinfo = "postgres://nhshglygkfiair:5d42deb354a442697dea6593f1f2bb6e0e869bda02adaad22d3cdcbd321671e1@ec2-23-21-122-141.compute-1.amazonaws.com:5432/d2dorvldn0g3nl"
+		var err error
+		db, err = sql.Open("postgres", dbinfo)
+		if err != nil {
+			fmt.Printf(err.Error())
+			return nil
+		}
+	}
+	return db
 }
 
-type IErrorCheck func(inMsg) error
-
-const LATIN_MAX_SIZE = 765
-const CYRILIC_MAX_SIZE = 365
-
-var COUNTER = 1
+func initDB() {
+	c := getDB()
+	_, r := c.Exec(`
+	CREATE TABLE MY_USERS(
+		user_id serial PRIMARY KEY, 
+		username VARCHAR (100) UNIQUE NOT NULL, 
+		password VARCHAR (100) NOT NULL
+	)`)
+	if r != nil {
+		fmt.Println(r.Error())
+	}
+}
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
 	router := mux.NewRouter()
-	port := os.Getenv("PORT")
-	if port == "" {
-		fmt.Println("Env POST must be set!")
-		port = ":8005"
-	} else {
-		port = ":" + port
-	}
+	initDB()
+	port := ":8005"
+
 	var dir string
 
 	flag.StringVar(&dir, "dir", "./static", "the directory to serve files from. Defaults to the current dir")
 	flag.Parse()
 	fmt.Println("Running server on port " + port)
 
+	router.Use(ends.SecureEndoint)
+	router.Use(ends.AccessLogMiddleware)
+
 	// GETs
 	router.HandleFunc("/api/v1/login/", ends.Login).Methods("POST")
-	router.HandleFunc("/api/v1/income/", ends.SecureEndpoint(ends.Get)).Methods("GET")
-	router.HandleFunc("/api/v1/income/{id}", ends.SecureEndpoint(ends.Get)).Methods("GET")
+	router.HandleFunc("/api/v1/income/", ends.Get).Methods("GET")
+	router.HandleFunc("/api/v1/income/{id}", ends.Get).Methods("GET")
 
 	// POSTs
-	router.HandleFunc("/api/v1/income/", ends.SecureEndpoint(ends.Create)).Methods("POST")
-	
-	router.HandleFunc("/test", sayHello).Methods("GET", "POST")
+	router.HandleFunc("/api/v1/income/", ends.Create).Methods("POST")
 
 	// Static "/" must be last in code
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))
 
 	log.Fatal(http.ListenAndServe(port, router))
-}
-
-func sayHello(w http.ResponseWriter, r *http.Request) {
-	var in inMsg
-	// Save a copy of this request for debugging.
-	requestDump, err1 := httputil.DumpRequest(r, true)
-	if err1 != nil {
-		fmt.Println(err1)
-	}
-	fmt.Println(string(requestDump))
-	decoder := json.NewDecoder(r.Body)
-	fmt.Printf("request Content-Length=%d ", r.ContentLength)
-	err := decoder.Decode(&in)
-	if err != nil {
-		fmt.Println(err)
-		out := outMsg{Status: "Error " + err.Error()}
-		var buf []byte
-		buf, err = json.Marshal(out)
-		_, err = w.Write(buf)
-		return
-	}
-	errorExists := false
-	checkError := func(f IErrorCheck) {
-		if errorExists == true {
-			return
-		}
-		err := f(in)
-		if err != nil {
-			errorExists = true
-			fmt.Println("Error", err)
-			out := outMsg{Status: "Error " + err.Error()}
-			var buf []byte
-			buf, err = json.Marshal(out)
-			_, err = w.Write(buf)
-		}
-	}
-	checkError(checkNumber)
-	checkError(checkText)
-	if errorExists {
-		return
-	}
-	fmt.Printf("[%d] No errors in %d messages \n", COUNTER, len(in.Messages))
-	var out outMsg
-	for _, i := range in.Messages {
-		tmp := fmt.Sprintf("%s-%s", randStr(4), strconv.FormatInt(time.Now().UTC().UnixNano(), 10))
-		COUNTER += 1
-		out.Messages = append(out.Messages, Message{Processed: true, Phone: strconv.Itoa(int(i.Phone)), MessageID: tmp, ExtraID: i.Extraid, Accepted: true})
-	}
-	var buf []byte
-	buf, err = json.Marshal(out)
-	fmt.Printf(" response size=%d \n", len(buf))
-	_, err = w.Write(buf)
-}
-
-func randStr(n int) string {
-	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz1234567890")
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
-}
-
-func checkText(i inMsg) error {
-	var isViber bool
-	var isSms bool
-	var maximumSize int = 1000
-	for _, b := range i.Channels {
-		if b == "sms" {
-			isSms = true
-		}
-		if b == "viber" {
-			isViber = true
-		}
-	}
-	for _, msg := range i.Messages {
-		if isSms && isViber {
-			if isCyrilic(msg.Text) {
-				maximumSize = CYRILIC_MAX_SIZE
-			} else {
-				maximumSize = LATIN_MAX_SIZE
-			}
-		} else if isViber {
-			maximumSize = 1000
-		}
-	}
-	for _, msg := range i.Messages {
-		if utf8.RuneCountInString(msg.Text) > maximumSize || utf8.RuneCountInString(msg.Text) == 0 {
-			return fmt.Errorf("checkText: msg=%s minSize=1 maxSize=%d actualSize=%d", msg.Text, maximumSize, utf8.RuneCountInString(msg.Text))
-		}
-	}
-	return nil
-}
-
-func isCyrilic(s string) bool {
-	var re = regexp.MustCompile(`(?m)\p{Cyrillic}`)
-	_isCyrilic := re.Match([]byte(s))
-	return _isCyrilic
-}
-
-func checkNumber(i inMsg) error {
-	for _, i := range i.Messages {
-		n := strconv.Itoa(int(i.Phone))
-		if len(n) != 12 || !strings.HasPrefix(n, "380") {
-			return errors.New("checkNumber: invalid phone number")
-		}
-	}
-	return nil
 }

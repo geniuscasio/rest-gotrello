@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/geniuscasio/rest-gotrello/entities"
+	_ "github.com/lib/pq"
 )
 
 var incomes []entities.Income

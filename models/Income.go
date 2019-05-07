@@ -1,7 +1,5 @@
 package models
 
-var Incomes []Income
-
 type Income struct {
 	Id     string      `json:"id,omitempty"`
 	Amount float32     `json:"amount,omitempty"`
@@ -11,7 +9,7 @@ type Income struct {
 
 func Store(obj Income) bool {
 	//TODO save Incomes to persistance storage
-	return true;
+	return true
 }
 
 func NewIncome(amount float32, hint string, tags []IncomeTag) Income {
