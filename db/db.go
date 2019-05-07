@@ -32,7 +32,7 @@ func InitDB() {
 		username VARCHAR (100) UNIQUE NOT NULL, 
 		password VARCHAR (100) NOT NULL
 	)`)
-	c.Exec(`
+	_, r = c.Exec(`
 		INSERT INTO MY_USERS(username, password) VALUES ("admin", "-995833633")
 	`)
 	if r != nil {
