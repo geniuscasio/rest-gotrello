@@ -46,8 +46,11 @@ func initDB() {
 func main() {
 	router := mux.NewRouter()
 	initDB()
-	port := ":8005"
-
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8005"
+	}
+	port = ":" + port
 	var dir string
 
 	flag.StringVar(&dir, "dir", "./static", "the directory to serve files from. Defaults to the current dir")
