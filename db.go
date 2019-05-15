@@ -52,13 +52,19 @@ func createUser(name, pwd string) bool {
 }
 
 func getUser(name string) (pass string) {
-	stmt, err := getDB().Prepare("SELECT password FROM MY_USERS WHERE username=$1")
+	stmt, err := getDB().Prepare("SELECT password FROM MY_USERS WHERE username = $1")
 	if err != nil {
 		fmt.Errorf(err.Error())
 	}
-	res, _ := stmt.Query(name)
+	res, err := stmt.Query(name)
+	defer res.Close()
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
+	}
 	for res.Next() {
 		err = res.Scan(&pass)
+		return
 	}
 	return ""
 }
