@@ -30,10 +30,8 @@ func Get(id string) []entities.Income {
 	} else {
 		_id, _ = strconv.ParseInt(id, 0, 64)
 	}
-	tag1 := entities.IncomeTag{ID: 1, Name: "Tag1", Description: "abc", Aliases: []string{"a"}}
-	tag2 := entities.IncomeTag{ID: 2, Name: "Tag2", Description: "abc", Aliases: []string{"a"}}
-	tag3 := entities.IncomeTag{ID: 3, Name: "Tag3", Description: "abc", Aliases: []string{"a"}}
-	tt := []entities.IncomeTag{tag1, tag2, tag3}
+
+	tt := "1,2,3"
 	income := entities.Income{ID: _id, Amount: 50.0, Date: time.Now(), Hint: "GetById result", Tags: tt}
 	incomes = append(incomes, income)
 	return incomes
