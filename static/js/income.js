@@ -39,9 +39,9 @@ $(document).ready(function() {
 
             tags = `<a class="badge badge-warning income-tags">no tags</a>`
             if (!(typeof(income.tags) === "undefined")) {
-                tags = ''
-                for (var tag = 0; tag < income.tags.length; tag++){
-                    tags += `<a class="badge badge-info income-tags">${income.tags[tag].name}</a>`
+                tag_list = income.tags.split(",")
+                for (var k = 0; k < tag_list.length; k++){
+                    tags += `<a class="badge badge-info income-tags">${tag_list[k]}</a>`
                 }
             }
             dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' };
