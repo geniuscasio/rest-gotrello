@@ -88,7 +88,7 @@ func getUser(name string) (pass string) {
 }
 
 func getIncome(id, userId string) []entities.Income {
-	u, _ := strconv.Atoi(userId)
+	u, _ := strconv.Atoi(getUserIDByName(userId))
 	r, err := getDB().Query(_SQLSelectAllUserIncomes, u)
 	if err != nil {
 		fmt.Println(err.Error())
