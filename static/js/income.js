@@ -3,18 +3,14 @@ $(document).ready(function() {
         url:"api/v1/income/"
     }).then(function(data) {
         var t = document.getElementById("username");
+        var userName = getCookie("userName")
 
         $('.row').append();
         var jsonData = JSON.parse(data);
-        console.log(jsonData.session.login);
-        t.innerText = jsonData.session.login;
-        if (jsonData["session"]["status"] == false) {
-            window.alert("Ошибка сессии");
-            window.location.href = "/";
-            return;
-        }
+        t.innerText = userName
         var fallSum = 0;
         var htmlTable = ''
+        console.log(jsonData)
         if (jsonData == null) {
             htmlTable = `
                 <tr>
@@ -27,12 +23,10 @@ $(document).ready(function() {
             </tr>`;
             $('.incomeTable').append(htmlTable);
         }
-        jsonData = jsonData["content"]
-        console.log(jsonData)
+        console.log()
+        const incomeStyle = "income";
+        const outcomeStyle = "outcome";
         for (var i = 0; i < jsonData.length; i++) {
-            const incomeStyle = "income";
-            const outcomeStyle = "outcome";
-
             var income = jsonData[i];
             var id = income.id;
             var date = new Date(income.date);
@@ -40,7 +34,7 @@ $(document).ready(function() {
             var amount = income.amount;
             var rowStyle = incomeStyle;
             fallSum += amount;
-            
+            console.log(id, date, hint, amount, rowStyle)
             if (amount < 0) { rowStyle = outcomeStyle; }
 
             tags = `<a class="badge badge-warning income-tags">no tags</a>`
@@ -66,6 +60,17 @@ $(document).ready(function() {
         
     });
 })
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+           if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+    }
+    return "";
+}   
+
 function newIncome(form) {
     var id = form.id.value;
     var amount = form.amount.value;

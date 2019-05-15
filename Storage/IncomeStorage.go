@@ -22,8 +22,8 @@ func GetAll() []entities.Income {
 	return incomes
 }
 
-//GetByID returns Income with given Id (always return something for now)
-func GetByID(id string) entities.Income {
+//Get returns Income with given Id (always return something for now)
+func Get(id string) []entities.Income {
 	var _id int64
 	if id == "" {
 		_id = 1
@@ -36,5 +36,5 @@ func GetByID(id string) entities.Income {
 	tt := []entities.IncomeTag{tag1, tag2, tag3}
 	income := entities.Income{ID: _id, Amount: 50.0, Date: time.Now(), Hint: "GetById result", Tags: tt}
 	incomes = append(incomes, income)
-	return income
+	return incomes
 }

@@ -1,4 +1,4 @@
-package endpoints
+package main
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 
 	storage "github.com/geniuscasio/rest-gotrello/Storage"
 	"github.com/geniuscasio/rest-gotrello/entities"
-	"github.com/gorilla/mux"
 )
 
 //Create entity
@@ -31,14 +30,13 @@ func Create(w http.ResponseWriter, r *http.Request) {
 //Get entity
 func Get(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside Get")
-	params := mux.Vars(r)
-	_id := params["id"]
-	fmt.Print(_id)
-	if _id == "" {
-		data, _ := json.Marshal(storage.GetAll())
-		w.Write(data)
+	userID := ""
+	sessionID, err := r.Cookie("sessionId")
+	if err != nil {
+		fmt.Println(err.Error())
 	} else {
-		data, _ := json.Marshal(storage.GetByID(params["id"]))
-		w.Write(data)
+		userID = GetUserBySession(sessionID.Value).Login
 	}
+	data, _ := json.Marshal(getIncome("", userID))
+	w.Write(data)
 }

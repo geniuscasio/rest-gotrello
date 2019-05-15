@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	ends "github.com/geniuscasio/rest-gotrello/endpoints"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -31,11 +30,11 @@ func main() {
 
 	// GETs
 	router.HandleFunc("/api/v1/login/", Login).Methods("POST")
-	router.HandleFunc("/api/v1/income/", ends.Get).Methods("GET")
-	router.HandleFunc("/api/v1/income/{id}", ends.Get).Methods("GET")
+	router.HandleFunc("/api/v1/income/", Get).Methods("GET")
+	router.HandleFunc("/api/v1/income/{id}", Get).Methods("GET")
 
 	// POSTs
-	router.HandleFunc("/api/v1/income/", ends.Create).Methods("POST")
+	router.HandleFunc("/api/v1/income/", Create).Methods("POST")
 
 	// Static "/" must be last in code
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(dir))))

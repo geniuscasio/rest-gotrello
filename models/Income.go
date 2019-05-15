@@ -1,10 +1,11 @@
 package models
 
 type Income struct {
-	Id     string      `json:"id,omitempty"`
-	Amount float32     `json:"amount,omitempty"`
-	Hint   string      `json:"hint,omitempty"`
-	Tags   []IncomeTag `json:"tags,omitempty"`
+	ID     string  `json:"id,omitempty"`
+	Amount float32 `json:"amount,omitempty"`
+	Hint   string  `json:"hint,omitempty"`
+	Tags   string  `json:"tags,omitempty"`
+	Date   string  `json:"date,omitempty"`
 }
 
 func Store(obj Income) bool {
@@ -12,8 +13,8 @@ func Store(obj Income) bool {
 	return true
 }
 
-func NewIncome(amount float32, hint string, tags []IncomeTag) Income {
-	i := Income{Id: "1", Amount: amount, Hint: hint, Tags: tags}
+func NewIncome(amount float32, hint string, tags string) Income {
+	i := Income{ID: "1", Amount: amount, Hint: hint, Tags: tags}
 	Store(i)
 	return i
 }
