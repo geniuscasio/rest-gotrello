@@ -13,6 +13,17 @@ function check(form) {
     userName = form.userName.value;
     userHash = form.password.value.hashCode();
     method = "post";
+    error = ""
+    if(userName.length < 3) {
+        error = "Ім'я користувача занадто коротке!" 
+    }
+    if(form.password.value.length < 5+1) {
+        error = "Пароль повинен буди довшим 5 символів!"
+    }
+    if(error != "") {
+        alert(error)
+        return
+    }
 
     var form = document.createElement("form");
     form.setAttribute("method", method);
