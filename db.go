@@ -42,7 +42,6 @@ func InitDB() {
 	if r != nil {
 		fmt.Println(r.Error())
 	}
-	_, r = c.Exec(`drop table INCOME`)
 	_, r = c.Exec(`
 		CREATE TABLE INCOME(
 			income_id serial PRIMARY KEY,
