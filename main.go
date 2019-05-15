@@ -13,7 +13,7 @@ import (
 
 func main() {
 	router := mux.NewRouter()
-	// dbHelper.InitDB()
+	dbHelper.InitDB()
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8005"
