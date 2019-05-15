@@ -104,8 +104,20 @@ func getIncome(id, userId string) []entities.Income {
 	return resultSet
 }
 
-func saveIncome(i entities.Income, userId string) bool {
-	_, err := getDB().Exec(_SQLInsertIncomeByUser, i.Amount, i.Hint, i.Tags, userId, i.Date)
+func getUserIDByName(name string) string {
+	r, err := getDB().Query(`SELECT user_id FROM MY_USERS WHERE username = $1`, name)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	for r.Next() {
+		var UserID string
+		r.Scan(&UserID)
+		return UserID
+	}
+}
+
+func saveIncome(i entities.Income, userName string) bool {
+	_, err := getDB().Exec(_SQLInsertIncomeByUser, i.Amount, i.Hint, i.Tags, getUserIDByName(userName), i.Date)
 	if err != nil {
 		fmt.Printf(err.Error())
 		return false
