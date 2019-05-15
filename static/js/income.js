@@ -36,7 +36,7 @@ $(document).ready(function() {
             fallSum += amount;
             console.log(id, date, hint, amount, rowStyle)
             if (amount < 0) { rowStyle = outcomeStyle; }
-
+            tags = ""
             if(typeof(income.tags) === "undefined") {
                 tags = `<a class="badge badge-warning income-tags">no tags</a>`
             } else {
