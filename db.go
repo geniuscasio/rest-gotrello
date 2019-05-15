@@ -114,6 +114,7 @@ func getUserIDByName(name string) string {
 		r.Scan(&UserID)
 		return UserID
 	}
+	return ""
 }
 
 func saveIncome(i entities.Income, userName string) bool {
