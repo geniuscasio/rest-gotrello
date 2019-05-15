@@ -8,7 +8,7 @@ import (
 
 var db *sql.DB
 
-const _SQLInsertUser = "INSERT INTO my_users(username, password) VALUES ($1, $1)"
+const _SQLInsertUser = "INSERT INTO my_users(username, password) VALUES (?, ?)"
 
 func getDB() *sql.DB {
 	if db == nil {
