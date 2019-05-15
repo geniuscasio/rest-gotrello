@@ -37,8 +37,9 @@ $(document).ready(function() {
             console.log(id, date, hint, amount, rowStyle)
             if (amount < 0) { rowStyle = outcomeStyle; }
 
-            tags = `<a class="badge badge-warning income-tags">no tags</a>`
-            if (!(typeof(income.tags) === "undefined")) {
+            if(typeof(income.tags) === "undefined") {
+                tags = `<a class="badge badge-warning income-tags">no tags</a>`
+            } else {
                 tag_list = income.tags.split(",")
                 for (var k = 0; k < tag_list.length; k++){
                     tags += `<a class="badge badge-info income-tags">${tag_list[k]}</a>`
