@@ -20,13 +20,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error decoding income", err.Error())
 	}
-	userID := ""
-	sessionID, err := r.Cookie("sessionId")
-	if err != nil {
-		fmt.Println("error get sessionId", err.Error())
-	} else {
-		userID = GetUserBySession(sessionID.Value).Login
-	}
+	sessionID := GetSession(r)
+	fmt.Println("session = ", sessionID)
+	userID := GetUserBySession(sessionID).Login
+	fmt.Println("user_id", userID)
+
 	saveIncome(income, userID)
 	created, _ := json.Marshal(income)
 	w.WriteHeader(201)
