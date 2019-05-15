@@ -28,7 +28,7 @@ func AccessLogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.RequestURI)
 		session := GetSession(r)
-		fmt.Printf("[AccessLog]%s - %s Session id = %s \n", r.RequestURI, r.Host, session)
+		fmt.Printf("[AccessLog]%s - %s %s Session id = %s \n", r.RequestURI, r.Method r.Host, session)
 		next.ServeHTTP(w, r)
 	})
 }
