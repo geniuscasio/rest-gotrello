@@ -1,4 +1,4 @@
-package dbHelper
+package main
 
 import (
 	"database/sql"
@@ -7,6 +7,8 @@ import (
 )
 
 var db *sql.DB
+
+const _SQLInsertUser = "INSERT INTO my_users(username, password) VALUES ($1, $1)"
 
 func getDB() *sql.DB {
 	if db == nil {
@@ -38,6 +40,14 @@ func InitDB() {
 	if r != nil {
 		fmt.Println(r.Error())
 	}
+}
+
+func createUser(name, pwd string) bool {
+	_, err := getDB().Exec(_SQLInsertUser, name, pwd)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func getUser(name string) (pass string) {

@@ -10,8 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type SecureHandler func(r *http.Request, rb *ResponseBox)
-
 //Create entity
 func Create(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Create invoked!")
@@ -43,14 +41,4 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		data, _ := json.Marshal(storage.GetByID(params["id"]))
 		w.Write(data)
 	}
-}
-
-//Update entity
-func Update(r *http.Request, rb *ResponseBox) {
-
-}
-
-//Delete entity
-func Delete(r *http.Request, rb *ResponseBox) {
-
 }

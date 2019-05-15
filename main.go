@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	dbHelper "github.com/geniuscasio/rest-gotrello/db"
 	ends "github.com/geniuscasio/rest-gotrello/endpoints"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -15,7 +14,7 @@ import (
 
 func main() {
 	router := mux.NewRouter()
-	dbHelper.InitDB()
+	// dbHelper.InitDB()
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8005"
@@ -27,11 +26,11 @@ func main() {
 	flag.Parse()
 	fmt.Println("Running server on port " + port)
 
-	router.Use(ends.SecureEndoint)
-	router.Use(ends.AccessLogMiddleware)
+	router.Use(SecureEndoint)
+	router.Use(AccessLogMiddleware)
 
 	// GETs
-	router.HandleFunc("/api/v1/login/", ends.Login).Methods("POST")
+	router.HandleFunc("/api/v1/login/", Login).Methods("POST")
 	router.HandleFunc("/api/v1/income/", ends.Get).Methods("GET")
 	router.HandleFunc("/api/v1/income/{id}", ends.Get).Methods("GET")
 

@@ -1,4 +1,4 @@
-package endpoints
+package main
 
 import (
 	"errors"
@@ -106,6 +106,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("userName")
 	userHash := r.FormValue("userHash")
 	// Check username+password
+
+	fmt.Printf("пиздуем в бд за юзером %s с хешем %s\n", userName, userHash)
+	pwd := getUser(userName)
+	if pwd == "" {
+		userCreated := createUser(userName, userHash)
+		if !userCreated {
+			panic("error creating user")
+		}
+	}
 	pass, ok := users[userName]
 
 	if ok && pass == userHash {
