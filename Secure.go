@@ -103,6 +103,7 @@ func CheckSession(s string) (bool, error) {
 // Login reads hash from request body, check if it valid, will create session for user and assign it to user cookie
 func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Login invoked!")
+	userCreated := false
 	userName := r.FormValue("userName")
 	userHash := r.FormValue("userHash")
 	// Check username+password
@@ -110,14 +111,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("пиздуем в бд за юзером %s с хешем %s\n", userName, userHash)
 	pwd := getUser(userName)
 	if pwd == "" {
-		userCreated := createUser(userName, userHash)
+		userCreated = createUser(userName, userHash)
 		if !userCreated {
 			panic("error creating user")
 		}
 	}
-	pass, ok := users[userName]
 
-	if ok && pass == userHash {
+	if userCreated || pwd == userHash {
 		timestamp := time.Now()
 		salt := timestamp.Format("2006-01-02 15:04:05")
 		// Create session ID
