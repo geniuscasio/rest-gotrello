@@ -19,7 +19,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var income entities.Income
 	err := json.NewDecoder(r.Body).Decode(&income)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("error decoding income", err.Error())
 	}
 	storage.Save(income)
 	created, _ := json.Marshal(income)

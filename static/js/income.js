@@ -76,18 +76,7 @@ function newIncome(form) {
     var amount = form.amount.value;
     var date = form.date.value;
     var hint = form.hint.value;
-    var tags_t = form.tags.value.split(",");
-    var tags = null;
-    console.log(tags_t.length)
-    if (tags_t[0] != "") {
-        var pack;
-        var tags = new Array();
-        for(var i = 0; i < tags_t.length; i++) {
-            pack = new Object();
-            pack.name = tags_t[i];
-            tags.push(pack);
-        }
-    }
+    var tags = form.tags.value;
     console.log(tags);
 
     var xhr = new XMLHttpRequest();
