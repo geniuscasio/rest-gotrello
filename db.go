@@ -12,7 +12,7 @@ import (
 var db *sql.DB
 
 const _SQLInsertUser = "INSERT INTO my_users(username, password) VALUES ($1, $2)"
-const _SQLSelectAllUserIncomes = "SELECT income_id, amount, hint, tags, user_id FROM INCOME where user_id = $1"
+const _SQLSelectAllUserIncomes = "SELECT income_id, amount, hint, tags, date FROM INCOME where user_id = $1"
 const _SQLInsertIncomeByUser = "INSERT INTO INCOME(amount, hint, tags, user_id, date) VALUES ($1, $2, $3, $4, $5)"
 
 func getDB() *sql.DB {
@@ -96,12 +96,17 @@ func getIncome(id, userId string) []entities.Income {
 	}
 	var resultSet []entities.Income
 	for r.Next() {
-		var i entities.Income
-		err = r.Scan(&i)
-		resultSet = append(resultSet, i)
+		var income_id int64
+		var amount float32
+		var hint string
+		var date string
+		var tags string
+		err = r.Scan(&income_id, &amount, &hint, &tags, &date)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
+		i := entities.Income{Amount: amount, Date: date, Hint: hint, Tags: tags, ID: income_id}
+		resultSet = append(resultSet, i)
 	}
 	return resultSet
 }
