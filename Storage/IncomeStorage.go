@@ -2,7 +2,6 @@ package storage
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/geniuscasio/rest-gotrello/entities"
 	_ "github.com/lib/pq"
@@ -32,7 +31,7 @@ func Get(id string) []entities.Income {
 	}
 
 	tt := "1,2,3"
-	income := entities.Income{ID: _id, Amount: 50.0, Date: time.Now(), Hint: "GetById result", Tags: tt}
+	income := entities.Income{ID: _id, Amount: 50.0, Date: "time.Now()", Hint: "GetById result", Tags: tt}
 	incomes = append(incomes, income)
 	return incomes
 }

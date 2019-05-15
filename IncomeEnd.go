@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	storage "github.com/geniuscasio/rest-gotrello/Storage"
 	"github.com/geniuscasio/rest-gotrello/entities"
 )
 
@@ -21,7 +20,14 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error decoding income", err.Error())
 	}
-	storage.Save(income)
+	userID := ""
+	sessionID, err := r.Cookie("sessionId")
+	if err != nil {
+		fmt.Println("error get sessionId", err.Error())
+	} else {
+		userID = GetUserBySession(sessionID.Value).Login
+	}
+	saveIncome(income, userID)
 	created, _ := json.Marshal(income)
 	w.WriteHeader(201)
 	w.Write(created)
