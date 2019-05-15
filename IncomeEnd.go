@@ -34,13 +34,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 //Get entity
 func Get(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside Get")
-	userID := ""
-	sessionID, err := r.Cookie("sessionId")
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		userID = GetUserBySession(sessionID.Value).Login
-	}
+	sessionID := GetSession(r)
+	fmt.Println("session = ", sessionID)
+	userID := GetUserBySession(sessionID).Login
 	data, _ := json.Marshal(getIncome("", userID))
 	w.Write(data)
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/geniuscasio/rest-gotrello/entities"
 )
@@ -87,7 +88,8 @@ func getUser(name string) (pass string) {
 }
 
 func getIncome(id, userId string) []entities.Income {
-	r, err := getDB().Query(_SQLSelectAllUserIncomes, userId)
+	u, _ := strconv.Atoi(userId)
+	r, err := getDB().Query(_SQLSelectAllUserIncomes, u)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
