@@ -45,6 +45,7 @@ func InitDB() {
 func createUser(name, pwd string) bool {
 	_, err := getDB().Exec(_SQLInsertUser, name, pwd)
 	if err != nil {
+		fmt.Printf(err.Error())
 		return false
 	}
 	return true
