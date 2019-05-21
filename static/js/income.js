@@ -34,7 +34,6 @@ $(document).ready(function() {
             }
             return 0;
         });
-        jsonData.sort();
         console.log(jsonData)
         if (jsonData == null) {
             htmlTable = `
@@ -123,7 +122,7 @@ function newIncome(form) {
         hint: hint,
         tags: tags
     }));
-    // location.reload();
+    location.reload();
 }
 
 function isLoginOK(data) {
