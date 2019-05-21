@@ -114,14 +114,14 @@ function updateIncomeView() {
             <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
             <td>${hint}</td>
             <td>${tags}</td>
-            <td>↓${balance}$</td>
+            <td>↓${balance}</td>
             <td><button onClick='deleteIncome(${id})'>❌</button></td>
         </tr>`;
     }
     $('.incomeTable').append(htmlTable);
-    document.getElementById("totalIncome").innerText = "Доходи: " + totalIncome + "$";
-    document.getElementById("totalOutcome").innerText = "Витрати: " + totalOutcome + "$";
-    document.getElementById("balance").innerText = "Баланс: " + balance + "$";
+    document.getElementById("totalIncome").innerText = "Доходи: " + totalIncome;
+    document.getElementById("totalOutcome").innerText = "Витрати: " + totalOutcome;
+    document.getElementById("balance").innerText = "Баланс: " + balance;
 }
 
 function deleteIncome(id){
