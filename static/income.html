@@ -61,8 +61,8 @@
                             <thead class="thead-dark">
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Сума 💲</th>
-                                    <th scope="col">Дата 📅</th>
+                                    <th scope="col"><a style="color: white;" title="Сортувати" href="#" id="sortAmount" onclick="sortByAmount()">Сума 💲</a></th>
+                                    <th scope="col"><a style="color: white;" title="Сортувати" href="#" id="sortDate" onclick="sortByDate()">Дата 📅</a></th>
                                     <th scope="col">Помітка 📝</th>
                                     <th scope="col">Теги 🏷️</th>
                                     <th scope="col">Хвильова 💸</th>
@@ -72,6 +72,16 @@
                             <tbody class="incomeTable">
                             </tbody>
                         </table>
+                        <table class="table">
+                            <thead class="thead">
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                        <h3 id="totalIncome" style="text-align: left;">Витрати: -1500</h3>
+                        <h3 id="totalOutcome" style="text-align: left;">Доходи: +15000</h3>
+                        <h3 id="balance" style="text-align: left;">Баланс: 13500</h3>
                     </div>
                 </div>
             </div>

@@ -1,90 +1,30 @@
-var sortType = 1
+var sortType = 0
+var sortMode = 1
 var incomes = []
 
+const incomeStyle = "income";
+const outcomeStyle = "outcome";
+
 $(document).ready(function() {
-    $.ajax({        
-        url:"api/v1/income/"
-    }).then(function(data) {
-        var t = document.getElementById("username");
+    // $.ajax({        
+    //     url:"api/v1/income/"
+    // }).then(function(data) {
+        var userNamePlaceholder = document.getElementById("username");
         var userName = getCookie("userName")
         $('.row').append();
-        var jsonData = JSON.parse(data);
-        t.innerText = userName
-        var fallSum = 0;
-        var htmlTable = ''
-        // jsonData = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
-        // {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
-        console.log(jsonData)
-        jsonData.sort(function (a, b) {
-            var valueA = 0;
-            var valueB = 0;
-            if(sortType == 1) {
-                valueA = new Date(a.date).getTime();
-                valueB = new Date(b.date).getTime();
-            } else if (sortType == 0) {
-                valueA = a.amount;
-                valueB = b.amount;
-            }
-            if (valueA < valueB) {
-                return -1;
-            }
-            if (valueA > valueB) {
-                return 1;
-            }
-            return 0;
-        });
-        console.log(jsonData)
-        if (jsonData == null) {
-            htmlTable = `
-                <tr>
-                <th scope="row">No</th>
-                <td>No</td>
-                <td>No</td>
-                <td>No</td>
-                <td>No</td>
-                <td>No</td>
-            </tr>`;
-            $('.incomeTable').append(htmlTable);
-        }
-        console.log()
-        const incomeStyle = "income";
-        const outcomeStyle = "outcome";
-        for (var i = 0; i < jsonData.length; i++) {
-            var income = jsonData[i];
-            var id = i + 1;
-            var date = new Date(income.date);
-            var hint = income.hint;
-            var amount = income.amount;
-            var rowStyle = incomeStyle;
-            fallSum += amount;
-            console.log(id, date, hint, amount, rowStyle)
-            if (hint == undefined) { hing = ""; }
-            if (amount < 0) { rowStyle = outcomeStyle; }
-            tags = ""
-            if(typeof(income.tags) === "undefined") {
-                tags = `<a class="badge badge-warning income-tags">no tags</a>`
-            } else {
-                tag_list = income.tags.split(",")
-                for (var k = 0; k < tag_list.length; k++){
-                    tags += `<a class="badge badge-info income-tags">${tag_list[k]}</a>`
-                }
-            }
-            dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' };
-            htmlTable += `
-            <tr class="amount ${rowStyle}">
-                <th scope="row">${id}</th>
-                <td><a>${amount}$</a></td>
-                <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
-                <td>${hint}</td>
-                <td>${tags}</td>
-                <td>↓${fallSum}$</td>
-                <td><button>❌</button></td>
-            </tr>`;
-        }
-        $('.incomeTable').append(htmlTable);
-        
+        userNamePlaceholder.innerText = userName
+        data = '{}'
+        incomes = JSON.parse(data);
+        incomes = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, 
+        {"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": -7},
+        {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
+        {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
+        console.log(incomes)
+        incomes = sortIncomes(incomes);
+        console.log(incomes)
+        updateIncomeView()
     });
-})
+// })
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -95,6 +35,133 @@ function getCookie(cname) {
     }
     return "";
 }   
+
+function sortIncomes(what) {
+    console.log(sortType, sortMode)
+    var result = what.sort(function (a, b) {
+        var valueA = 0;
+        var valueB = 0;
+        if(sortType == 1) {
+            valueA = new Date(a.date).getTime();
+            valueB = new Date(b.date).getTime();
+        } else if (sortType == 0) {
+            valueA = a.amount;
+            valueB = b.amount;
+        }
+        if (valueA < valueB) {
+            return -1 * sortMode;
+        }
+        if (valueA > valueB) {
+            return 1 * sortMode;
+        }
+        return 0;
+    });
+    return result;
+}
+
+function updateIncomeView() {
+    var balance = 0;
+    var totalIncome = 0;
+    var totalOutcome = 0;
+    var htmlTable = ''
+    $('.incomeTable tr').remove();
+    if (incomes == null) {
+        htmlTable = `
+            <tr>
+            <th scope="row">No</th>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>`;
+        $('.incomeTable').append(htmlTable);
+    }    
+    for (var i = 0; i < incomes.length; i++) {
+        var income = incomes[i];
+        var id = i + 1;
+        var date = new Date(income.date);
+        var hint = income.hint;
+        var amount = income.amount;
+        var rowStyle;
+
+        balance += amount;
+        if (amount < 0) { 
+            rowStyle = outcomeStyle;
+            totalOutcome += amount;
+        } else if (amount > 0) {
+            rowStyle = incomeStyle;
+            totalIncome += amount;
+        }
+        if (hint == undefined) {
+            hint = "Немає"; 
+        }
+        
+        tags = ""
+        if(typeof(income.tags) === "undefined") {
+            tags = `<a class="badge badge-warning income-tags">no tags</a>`
+        } else {
+            tag_list = income.tags.split(",")
+            for (var k = 0; k < tag_list.length; k++){
+                tags += `<a class="badge badge-info income-tags">${tag_list[k]}</a>`
+            }
+        }
+        dateOptions = {year: 'numeric', month: 'numeric', day: 'numeric' };
+        htmlTable += `
+        <tr class="amount ${rowStyle}">
+            <th scope="row">${id}</th>
+            <td><a>${amount}$</a></td>
+            <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
+            <td>${hint}</td>
+            <td>${tags}</td>
+            <td>↓${balance}$</td>
+            <td><button>❌</button></td>
+        </tr>`;
+    }
+    $('.incomeTable').append(htmlTable);
+    document.getElementById("totalIncome").innerText = "Доходи: " + totalIncome;
+    document.getElementById("totalOutcome").innerText = "Витрати: " + totalOutcome;
+    document.getElementById("balance").innerText = "Баланс: " + balance;
+}
+
+function refreshSort() {
+    document.getElementById('sortAmount').innerText = "Сума 💲";
+    document.getElementById('sortDate').innerText = "Дата 📅";
+}
+
+function sortByAmount() {
+    sortType = 0;
+    var sortHint = document.getElementById('sortAmount');
+    var icon = sortReverse();
+    refreshSort()
+    sortHint.innerText = sortHint.innerText + icon;
+    incomes = sortIncomes(incomes);
+    updateIncomeView();
+    console.log("sort by amount");
+}
+
+function sortReverse() {
+    var icon = ""
+    if(sortMode == 1) {
+        icon = "⬇️";
+        sortMode = -1;
+    } else {
+        icon = "⬆️";
+        sortMode = 1;
+    }
+    return icon;
+}
+
+function sortByDate() {
+    sortType = 1
+    var sortHint = document.getElementById('sortDate');
+    var icon = sortReverse();
+    refreshSort()
+    sortHint.innerText = sortHint.innerText + icon;
+    incomes = sortIncomes(incomes);
+    updateIncomeView();
+    console.log("sort by date");
+}
 
 function newIncome(form) {
     var id = form.id.value;
