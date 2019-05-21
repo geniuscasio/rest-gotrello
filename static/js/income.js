@@ -2,9 +2,9 @@ var sortType = 1
 var incomes = []
 
 $(document).ready(function() {
-    // $.ajax({        
-    //     url:"api/v1/income/"
-    // }).then(function(data) {
+    $.ajax({        
+        url:"api/v1/income/"
+    }).then(function(data) {
         var t = document.getElementById("username");
         var userName = getCookie("userName")
         data = "{}"
@@ -13,8 +13,8 @@ $(document).ready(function() {
         t.innerText = userName
         var fallSum = 0;
         var htmlTable = ''
-        jsonData = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
-        {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
+        // jsonData = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
+        // {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
         console.log(jsonData)
         jsonData.sort(function (a, b) {
             var valueA = 0;
@@ -86,7 +86,7 @@ $(document).ready(function() {
         $('.incomeTable').append(htmlTable);
         
     });
-// })
+})
 
 function getCookie(cname) {
     var name = cname + "=";
