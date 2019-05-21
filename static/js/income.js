@@ -6,25 +6,25 @@ const incomeStyle = "income";
 const outcomeStyle = "outcome";
 
 $(document).ready(function() {
-    // $.ajax({        
-    //     url:"api/v1/income/"
-    // }).then(function(data) {
+    $.ajax({        
+        url:"api/v1/income/"
+    }).then(function(data) {
         var userNamePlaceholder = document.getElementById("username");
         var userName = getCookie("userName")
         $('.row').append();
         userNamePlaceholder.innerText = userName
-        data = '{}'
+        // data = '{}'
         incomes = JSON.parse(data);
-        incomes = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, 
-        {"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": -7},
-        {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
-        {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
+        // incomes = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, 
+        // {"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": -7},
+        // {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
+        // {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
         console.log(incomes)
         incomes = sortIncomes(incomes);
         console.log(incomes)
         updateIncomeView()
     });
-// })
+})
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -115,13 +115,25 @@ function updateIncomeView() {
             <td>${hint}</td>
             <td>${tags}</td>
             <td>↓${balance}$</td>
-            <td><button>❌</button></td>
+            <td><button onClick='deleteIncome(${id})'>❌</button></td>
         </tr>`;
     }
     $('.incomeTable').append(htmlTable);
-    document.getElementById("totalIncome").innerText = "Доходи: " + totalIncome;
-    document.getElementById("totalOutcome").innerText = "Витрати: " + totalOutcome;
-    document.getElementById("balance").innerText = "Баланс: " + balance;
+    document.getElementById("totalIncome").innerText = "Доходи: " + totalIncome + "$";
+    document.getElementById("totalOutcome").innerText = "Витрати: " + totalOutcome + "$";
+    document.getElementById("balance").innerText = "Баланс: " + balance + "$";
+}
+
+function deleteIncome(id){
+    var isApproved = confirm("Вы - администратор?");
+    if(isApproved) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "api/v1/income/", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            id: parseInt(id, 10)
+        }));
+    }
 }
 
 function refreshSort() {
