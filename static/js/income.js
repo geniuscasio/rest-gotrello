@@ -125,7 +125,7 @@ function updateIncomeView() {
 }
 
 function deleteIncome(id){
-    var isApproved = confirm("Вы - администратор?");
+    var isApproved = confirm("Ви впевнені?");
     if(isApproved) {
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", "api/v1/incomeDelete/", true);
