@@ -1,4 +1,6 @@
 var sortType = 1
+var incomes = []
+
 $(document).ready(function() {
     // $.ajax({        
     //     url:"api/v1/income/"
@@ -51,13 +53,14 @@ $(document).ready(function() {
         const outcomeStyle = "outcome";
         for (var i = 0; i < jsonData.length; i++) {
             var income = jsonData[i];
-            var id = income.id;
+            var id = i + 1;
             var date = new Date(income.date);
             var hint = income.hint;
             var amount = income.amount;
             var rowStyle = incomeStyle;
             fallSum += amount;
             console.log(id, date, hint, amount, rowStyle)
+            if (hint == undefined) { hing = ""; }
             if (amount < 0) { rowStyle = outcomeStyle; }
             tags = ""
             if(typeof(income.tags) === "undefined") {
