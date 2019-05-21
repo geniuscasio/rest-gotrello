@@ -110,7 +110,7 @@ function updateIncomeView() {
         htmlTable += `
         <tr class="amount ${rowStyle}">
             <th scope="row">${id}</th>
-            <td><a>${amount}$</a></td>
+            <td><a>${amount}</a></td>
             <td>${date.toLocaleString('ru-RU', dateOptions)}</td>
             <td>${hint}</td>
             <td>${tags}</td>
