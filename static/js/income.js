@@ -1,15 +1,38 @@
+var sortType = 1
 $(document).ready(function() {
-    $.ajax({        
-        url:"api/v1/income/"
-    }).then(function(data) {
+    // $.ajax({        
+    //     url:"api/v1/income/"
+    // }).then(function(data) {
         var t = document.getElementById("username");
         var userName = getCookie("userName")
-
+        data = "{}"
         $('.row').append();
         var jsonData = JSON.parse(data);
         t.innerText = userName
         var fallSum = 0;
         var htmlTable = ''
+        jsonData = [{"id": 1, "date": "2021-05-20T15:04:05.999999-07:00", "amount": 10}, {"id": 1, "date": "2019-05-20T15:04:05.999999-07:00", "amount": 2}, 
+        {"id": 1, "date": "2020-05-20T15:04:05.999999-07:00", "amount": 3}]
+        console.log(jsonData)
+        jsonData.sort(function (a, b) {
+            var valueA = 0;
+            var valueB = 0;
+            if(sortType == 1) {
+                valueA = new Date(a.date).getTime();
+                valueB = new Date(b.date).getTime();
+            } else if (sortType == 0) {
+                valueA = a.amount;
+                valueB = b.amount;
+            }
+            if (valueA < valueB) {
+                return -1;
+            }
+            if (valueA > valueB) {
+                return 1;
+            }
+            return 0;
+        });
+        jsonData.sort();
         console.log(jsonData)
         if (jsonData == null) {
             htmlTable = `
@@ -54,13 +77,13 @@ $(document).ready(function() {
                 <td>${hint}</td>
                 <td>${tags}</td>
                 <td>↓${fallSum}$</td>
-                <td><button>Delete</button></td>
+                <td><button>❌</button></td>
             </tr>`;
         }
         $('.incomeTable').append(htmlTable);
         
     });
-})
+// })
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -78,8 +101,15 @@ function newIncome(form) {
     var date = form.date.value;
     var hint = form.hint.value;
     var tags = form.tags.value;
-    console.log(tags);
+    if(date == "") {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
 
+        date = yyyy + '-' + mm + '-' + dd;
+    }
+    console.log(date)
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "api/v1/income/", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -90,7 +120,7 @@ function newIncome(form) {
         hint: hint,
         tags: tags
     }));
-    location.reload();
+    // location.reload();
 }
 
 function isLoginOK(data) {
