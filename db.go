@@ -14,6 +14,7 @@ var db *sql.DB
 const _SQLInsertUser = "INSERT INTO my_users(username, password) VALUES ($1, $2)"
 const _SQLSelectAllUserIncomes = "SELECT income_id, amount, hint, tags, date FROM INCOME where user_id = $1"
 const _SQLInsertIncomeByUser = "INSERT INTO INCOME(amount, hint, tags, user_id, date) VALUES ($1, $2, $3, $4, $5)"
+const _SQLDeleteIncome = "DELETE FROM INCOME WHERE id = $1"
 
 func getDB() *sql.DB {
 	if db == nil {
@@ -63,6 +64,15 @@ func createUser(name, pwd string) bool {
 		return false
 	}
 	return true
+}
+
+func deleteincome(incomeID int64) {
+	_, err := getDB().Exec(_SQLDeleteIncome, incomeID)
+	if err != nil {
+		fmt.Printf(err.Error())
+		return
+	}
+	return
 }
 
 func getUser(name string) (pass string) {

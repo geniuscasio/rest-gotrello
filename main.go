@@ -31,6 +31,7 @@ func main() {
 	// GETs
 	router.HandleFunc("/api/v1/login/", Login).Methods("POST")
 	router.HandleFunc("/api/v1/income/", Get).Methods("GET")
+	router.HandleFunc("/api/v1/incomeDelete", Delete).Methods("DELETE")
 	router.HandleFunc("/api/v1/income/{id}", Get).Methods("GET")
 
 	// POSTs

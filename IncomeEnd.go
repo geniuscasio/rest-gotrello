@@ -40,3 +40,19 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	data, _ := json.Marshal(getIncome("", userID))
 	w.Write(data)
 }
+
+//Get entity
+func Delete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Inside Delete")
+	r.ParseForm()
+	fmt.Println(r.Form)
+	defer r.Body.Close()
+	fmt.Println(r.Body)
+	var incomeID int64
+	err := json.NewDecoder(r.Body).Decode(&incomeID)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		deleteincome(incomeID)
+	}
+}
