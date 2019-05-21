@@ -7,7 +7,6 @@ $(document).ready(function() {
     }).then(function(data) {
         var t = document.getElementById("username");
         var userName = getCookie("userName")
-        data = "{}"
         $('.row').append();
         var jsonData = JSON.parse(data);
         t.innerText = userName
