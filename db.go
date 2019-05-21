@@ -45,7 +45,7 @@ func InitDB() {
 	_, r = c.Exec(`
 		CREATE TABLE INCOME(
 			income_id serial PRIMARY KEY,
-			amount NUMERIC (6, 2),
+			amount NUMERIC (10, 2),
 			hint VARCHAR (100),
 			tags VARCHAR (300),
 			date VARCHAR (100),
