@@ -102,6 +102,9 @@ function newIncome(form) {
     var date = form.date.value;
     var hint = form.hint.value;
     var tags = form.tags.value;
+    if(amount == "") {
+        alert("Поле сумма обов'язкове до заповнення!");
+    }
     if(date == "") {
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
