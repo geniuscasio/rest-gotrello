@@ -128,7 +128,7 @@ function deleteIncome(id){
     var isApproved = confirm("Вы - администратор?");
     if(isApproved) {
         var xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "api/v1/incomeincomeDelete/", true);
+        xhr.open("DELETE", "api/v1/incomeDelete/", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
             id: parseInt(id, 10)
