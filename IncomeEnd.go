@@ -41,7 +41,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-//Get entity
+//Delete entity
 func Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Inside Delete")
 	r.ParseForm()
@@ -55,4 +55,5 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	} else {
 		deleteincome(incomeID)
 	}
+	w.WriteHeader(201)
 }
